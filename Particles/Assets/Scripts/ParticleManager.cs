@@ -2,17 +2,23 @@ using NUnit.Framework;
 using UnityEngine;
 using System.Collections.Generic;
 using System;
+using Unity.VisualScripting;
 public class ParticleManager : MonoBehaviour
 {
-    void Start()
+    [SerializeField] private float globalSpeedEditable;
+    static public float globalSpeed;
+    static protected List<GameObject> allParticlesOnScreen;
+
+    private void Awake()
     {
-        
+        globalSpeed = globalSpeedEditable;
     }
 
-    void Update()
+    private void Start()
     {
-
+        allParticlesOnScreen = AllParticlesOnScreen();
     }
+
 
     protected List<GameObject> AllParticlesOnScreen()
     {

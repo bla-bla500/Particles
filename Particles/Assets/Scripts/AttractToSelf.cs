@@ -18,9 +18,10 @@ public class AttractToSelf : ParticleManager
     [SerializeField] private float dampingMultiplier;
     private float radious;
 
-
     void Start()
     {
+        allParticlesOnScreen.Add(gameObject);
+
         //Disables Rigidbodies Collider
         thisObjectsRigidbody = gameObject.GetComponent<Rigidbody2D>();
         thisObjectsColliders = new Collider2D[2];
@@ -32,9 +33,9 @@ public class AttractToSelf : ParticleManager
         //Gets this particles size
         radious = 0.2f;
     }
-    void Update()
+    void FixedUpdate()
     {
-        objectsInRange = ObjectsWithTagInRange(AllParticlesOnScreen(), attractToWhat, range, gameObject);
+        objectsInRange = ObjectsWithTagInRange(allParticlesOnScreen, attractToWhat, range, gameObject);
         for (int i = 0;i < objectsInRange.Count; i++)
         {
             //Moves tords objects
@@ -52,12 +53,16 @@ public class AttractToSelf : ParticleManager
             //damping
 
             Vector2 damping = (-dampingMultiplier) * new Vector2 ((float)Math.Pow(endingForce.x, 2) * endingForce.x, (float)Math.Pow(endingForce.y, 2) * endingForce.y);
-            print(damping.x + " " + damping.y);
             endingForce = endingForce + damping;
 
-            thisObjectsRigidbody.AddForce(endingForce * Time.deltaTime, ForceMode2D.Impulse);
+            thisObjectsRigidbody.AddForce(endingForce * globalSpeed, ForceMode2D.Impulse);
         }
     }
 
+    private void OnDestroy()
+    {
+        allParticlesOnScreen.Remove(gameObject);
+        allParticlesOnScreen.TrimExcess();
+    }
 
 }
