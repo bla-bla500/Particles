@@ -5,17 +5,16 @@ using System;
 using Unity.VisualScripting;
 public class ParticleManager : MonoBehaviour
 {
-    [SerializeField] private float globalSpeedEditable;
-    static public float globalSpeed;
-    static protected List<GameObject> allParticlesOnScreen;
+    static public float globalSpeed 
+    {
+        get;
+        private set;
+    }
+    static public List<GameObject> allParticlesOnScreen;
 
     private void Awake()
     {
-        globalSpeed = globalSpeedEditable;
-    }
-
-    private void Start()
-    {
+        globalSpeed = GlobalValues.globalSpeedEditable/GlobalValues.particlesToSpawnOnStart;
         allParticlesOnScreen = AllParticlesOnScreen();
     }
 
