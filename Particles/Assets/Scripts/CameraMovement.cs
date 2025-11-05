@@ -5,13 +5,15 @@ public class CameraMovement : MonoBehaviour
 {
     private Vector2 mouseStartingPosition;
     private Vector2 cameraStartingPositionWorldSpace;
+    private float zoomAmount;
     private bool hasStartingPosition = false;
     private float distancePerPixel;
+    [SerializeField] private float zoomSensitivity;
 
     private void Start()
     {
         distancePerPixel = Camera.main.ScreenToWorldPoint(new Vector2(0,0)).x - Camera.main.ScreenToWorldPoint(new Vector2(1,0)).x;
-        Debug.Log(distancePerPixel);
+        zoomAmount = Camera.main.orthographicSize;
     }
     void Update()
     {
@@ -32,6 +34,14 @@ public class CameraMovement : MonoBehaviour
         if (hasStartingPosition && Input.GetKeyUp(KeyCode.Mouse1))
         {
             hasStartingPosition = false;
+        }
+
+        if (Input.GetAxis("Mouse ScrollWheel") != 0)
+        {
+            zoomAmount += Input.GetAxis("Mouse ScrollWheel") * zoomSensitivity;
+            Camera.main.orthographicSize = zoomAmount;
+
+            distancePerPixel = Camera.main.ScreenToWorldPoint(new Vector2(0, 0)).x - Camera.main.ScreenToWorldPoint(new Vector2(1, 0)).x;
         }
     }
 

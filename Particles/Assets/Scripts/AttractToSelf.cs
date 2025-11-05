@@ -17,9 +17,11 @@ public class AttractToSelf : ParticleManager
     [SerializeField] private float repelForceMultiplier;
     [SerializeField] private float dampingMultiplier;
     private float radious;
+    Predicate<GameObject> isGameObject;
 
     void Start()
     {
+        isGameObject = obj => obj.GetInstanceID() == gameObject.GetInstanceID();
         allParticlesOnScreen.Add(gameObject);
 
         //Disables Rigidbodies Collider
@@ -61,7 +63,7 @@ public class AttractToSelf : ParticleManager
 
     private void OnDestroy()
     {
-        allParticlesOnScreen.Remove(gameObject);
+        allParticlesOnScreen.RemoveAt(allParticlesOnScreen.FindIndex(isGameObject));
         allParticlesOnScreen.TrimExcess();
     }
 
