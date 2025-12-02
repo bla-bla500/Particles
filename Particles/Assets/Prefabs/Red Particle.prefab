@@ -147,10 +147,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02966f8d2f8ff8a418fa8bbaaea38208, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AttractToSelf
-  globalSpeedEditable: 0
   attractToWhat: Red_p
   range: 5
   attractionStrengthMultiplier: 1
   repelForceRange: 5
   repelForceMultiplier: 2
   dampingMultiplier: 0.01
+  radious: 0

@@ -328,8 +328,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1130304f0189d042babf43eb4d087f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
-  spawnRange: 2.1
+  spawnRange: 5
   computeShader: {fileID: 7200000, guid: 131a9b5b195d24946a56ceb2ab8b9208, type: 3}
+  renderTexture: {fileID: 0}
 --- !u!1 &2040056617
 GameObject:
   m_ObjectHideFlags: 0

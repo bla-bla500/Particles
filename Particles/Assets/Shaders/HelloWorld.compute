@@ -1,0 +1,69 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+
+
+StructuredBuffer<float3> staticBuffer;
+RWStructuredBuffer<float3> theBuffer;
+RWStructuredBuffer<float3> debugBuffer;
+
+//varibles for shader to work
+uint whichParticle;
+float2 Result;
+float3 DebugVar;
+
+
+//basic functions
+float DistanceTo(float2 item1, float2 item2)
+{
+    return sqrt(pow((item1.x - item2.x), 2) + pow(item1.y - item2.y,2));
+
+}
+
+float2 DirectionTo(float2 item1, float2 item2)
+{
+    return normalize(item1 - item2);
+}
+
+//varibles that deffine particles
+float forceRange;
+float forceStrengthMultiplier;
+
+float repelWhenCloseRange = 5;
+float repelWhenCloseStrengthMultiplier = 2;
+
+
+
+
+
+[numthreads(8,8,1)]
+void CSMain(uint3 id : SV_GroupThreadID, uint3 groupID : SV_GroupID)
+{
+    uint count;
+    uint stride;
+
+    Result = float2(0, 0);
+    
+    staticBuffer.GetDimensions(count, stride);
+    
+    whichParticle = ((id.y * 8) + id.x) + (groupID.x * 64);
+    
+    
+        
+        
+    for (uint i = 0; i < count; i++)
+    {
+        
+        if (DistanceTo(float2(staticBuffer[whichParticle].x, staticBuffer[whichParticle].y), float2(staticBuffer[i].x, staticBuffer[i].y)) < 5 && DistanceTo(float2(staticBuffer[whichParticle].x, staticBuffer[whichParticle].y), float2(staticBuffer[i].x, staticBuffer[i].y)) != 0)
+        {
+            Result = Result + DirectionTo(float2(staticBuffer[i].x, staticBuffer[i].y), float2(staticBuffer[whichParticle].x, staticBuffer[whichParticle].y)) * DistanceTo(float2(staticBuffer[i].x, staticBuffer[i].y), float2(staticBuffer[whichParticle].x, staticBuffer[whichParticle].y));
+            
+            theBuffer[whichParticle] = float3(theBuffer[whichParticle].x, theBuffer[whichParticle].y, 0) + float3(Result.x, Result.y, 0);
+        }
+    }
+    theBuffer[whichParticle] = theBuffer[whichParticle] + float3(0,0,1);
+    
+
+}

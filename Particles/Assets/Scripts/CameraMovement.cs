@@ -38,7 +38,7 @@ public class CameraMovement : MonoBehaviour
 
         if (Input.GetAxis("Mouse ScrollWheel") != 0)
         {
-            zoomAmount += Input.GetAxis("Mouse ScrollWheel") * zoomSensitivity;
+            zoomAmount += -Input.GetAxis("Mouse ScrollWheel") * zoomSensitivity;
             Camera.main.orthographicSize = zoomAmount;
 
             distancePerPixel = Camera.main.ScreenToWorldPoint(new Vector2(0, 0)).x - Camera.main.ScreenToWorldPoint(new Vector2(1, 0)).x;

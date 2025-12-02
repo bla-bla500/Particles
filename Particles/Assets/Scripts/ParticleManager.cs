@@ -3,38 +3,16 @@ using UnityEngine;
 using System.Collections.Generic;
 using System;
 using Unity.VisualScripting;
+using System.Runtime.InteropServices.WindowsRuntime;
 public class ParticleManager : MonoBehaviour
 {
-    static public float globalSpeed 
-    {
-        get;
-        private set;
-    }
-    static public List<GameObject> allParticlesOnScreen;
-
     private void Awake()
     {
-        globalSpeed = GlobalValues.globalSpeedEditable/GlobalValues.particlesToSpawnOnStart;
-        allParticlesOnScreen = AllParticlesOnScreen();
+        GlobalValues.globalSpeed = GlobalValues.globalSpeedEditable/GlobalValues.particlesToSpawnOnStart;
     }
 
 
-    protected List<GameObject> AllParticlesOnScreen()
-    {
-        List<GameObject> list = new List<GameObject>();
-        GameObject[] array = GameObject.FindGameObjectsWithTag("Search");
-        for (int i = 0; i < array.Length; i++)
-        {
-            if (array[i].GetComponent<Tags>().tags.Contains("Particle"))
-            {
-                list.Add(array[i]);
-            }
-        }
-        list.TrimExcess();
-        return list;
-    }
-
-    protected float DistancetoObject(GameObject object1, GameObject object2)
+    public float DistancetoObject(GameObject object1, GameObject object2)
     {
         float distance = (float)Math.Sqrt(Math.Pow((object1.transform.position.x - object2.transform.position.x), 2) +
          Math.Pow((object1.transform.position.y - object2.transform.position.y), 2));
@@ -43,8 +21,9 @@ public class ParticleManager : MonoBehaviour
 
     protected Vector2 DirectionToObject(GameObject object1, GameObject object2)
     {
-        return object2.transform.position - object1.transform.position;
+        return (object2.transform.position - object1.transform.position).normalized;
     }
+
 
     protected List<GameObject> ObjectsWithTagInRange(List<GameObject> whichObjects, String withWhatTag, float inWhatRange, GameObject fromWhatObject)
     {
