@@ -13,7 +13,8 @@ RWStructuredBuffer<float3> debugBuffer;
 uint whichParticle;
 float2 Result;
 float3 DebugVar;
-
+float distanceTo;
+float2 directionTo;
 
 //basic functions
 float DistanceTo(float2 item1, float2 item2)
@@ -27,13 +28,6 @@ float2 DirectionTo(float2 item1, float2 item2)
     return normalize(item1 - item2);
 }
 
-//varibles that deffine particles
-float forceRange;
-float forceStrengthMultiplier;
-
-float repelWhenCloseRange = 5;
-float repelWhenCloseStrengthMultiplier = 2;
-
 
 
 
@@ -41,6 +35,13 @@ float repelWhenCloseStrengthMultiplier = 2;
 [numthreads(8,8,1)]
 void CSMain(uint3 id : SV_GroupThreadID, uint3 groupID : SV_GroupID)
 {
+    //varibles that deffine particles
+    float forceRange = 5;
+    float forceStrengthMultiplier = 1;
+    float repelWhenCloseStrengthMultiplier = 1;
+    float dampingMultiplier = 0.01;
+    
+    
     uint count;
     uint stride;
 
@@ -55,13 +56,25 @@ void CSMain(uint3 id : SV_GroupThreadID, uint3 groupID : SV_GroupID)
         
     for (uint i = 0; i < count; i++)
     {
+        distanceTo = DistanceTo(float2(staticBuffer[whichParticle].x, staticBuffer[whichParticle].y), float2(staticBuffer[i].x, staticBuffer[i].y));
+        directionTo = DirectionTo(float2(staticBuffer[i].x, staticBuffer[i].y), float2(staticBuffer[whichParticle].x, staticBuffer[whichParticle].y));
         
-        if (DistanceTo(float2(staticBuffer[whichParticle].x, staticBuffer[whichParticle].y), float2(staticBuffer[i].x, staticBuffer[i].y)) < 5 && DistanceTo(float2(staticBuffer[whichParticle].x, staticBuffer[whichParticle].y), float2(staticBuffer[i].x, staticBuffer[i].y)) != 0)
+        if (distanceTo < forceRange && distanceTo != 0) //distanceTo < forceRange && distanceTo != 0
         {
-            Result = Result + DirectionTo(float2(staticBuffer[i].x, staticBuffer[i].y), float2(staticBuffer[whichParticle].x, staticBuffer[whichParticle].y)) * DistanceTo(float2(staticBuffer[i].x, staticBuffer[i].y), float2(staticBuffer[whichParticle].x, staticBuffer[whichParticle].y));
+            //attract to other things
+            Result += directionTo * (distanceTo * forceStrengthMultiplier);
             
+            // repel when close
+            Result += (-directionTo) * (repelWhenCloseStrengthMultiplier / max(0.01, float(pow(distanceTo, 2))));
+            
+            //dampining 
+            Result += -dampingMultiplier * (Result * abs(Result));
+            
+            //set buffer
             theBuffer[whichParticle] = float3(theBuffer[whichParticle].x, theBuffer[whichParticle].y, 0) + float3(Result.x, Result.y, 0);
         }
+
+        
     }
     theBuffer[whichParticle] = theBuffer[whichParticle] + float3(0,0,1);
     

@@ -17,7 +17,7 @@ public class GlobalValues : MonoBehaviour
     {
         DontDestroyOnLoad(gameObject);
         globalSpeedEditable = 0.1f;
-        particlesToSpawnOnStart = 2;
+        particlesToSpawnOnStart = 1000;
         computeShaderResults = new float3[particlesToSpawnOnStart];
         RedParticle = temp;
     }
