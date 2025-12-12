@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 7818440338694075011}
   - component: {fileID: 6666712902180648416}
   m_Layer: 0
-  m_Name: Red Particle
+  m_Name: Yellow Particle
   m_TagString: Search
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -83,7 +83,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
-  m_Color: {r: 1, g: 0, b: 0, a: 1}
+  m_Color: {r: 1, g: 0.8700229, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -132,9 +132,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98ff45737112103468377812d0f443c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Tags
-  Particle: 1
-  Red_p: 1
-  tags: []
+  Red_p: 0
+  Yellow_p: 1
+  DONTTOUCHthisThingsType: 0
 --- !u!114 &6666712902180648416
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -147,4 +147,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02966f8d2f8ff8a418fa8bbaaea38208, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AttractToSelf
-  thisParticlesType: 1

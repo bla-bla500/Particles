@@ -1,24 +1,27 @@
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Mathematics;
 using UnityEngine;
 
 public class GlobalValues : MonoBehaviour
 {
-    static public float globalSpeedEditable;
-    static public int particlesToSpawnOnStart;
+    [SerializeField] private float globalSpeedEditable;
+    static public int[] particlesToSpawnOnStart;
     static public float globalSpeed;
     static public List<GameObject> allParticlesOnScreen;
     public static float3[] computeShaderResults;
-
-    [SerializeField] private GameObject temp;
+    [SerializeField] private GameObject RedParticleEditable;
+    [SerializeField] private GameObject YellowParticleEditable;
     static public GameObject RedParticle;
+    static public GameObject YellowParticle;
 
     private void Awake()
     {
         DontDestroyOnLoad(gameObject);
-        globalSpeedEditable = 0.1f;
-        particlesToSpawnOnStart = 1000;
-        computeShaderResults = new float3[particlesToSpawnOnStart];
-        RedParticle = temp;
+        particlesToSpawnOnStart = new int[] {500, 500};
+        globalSpeed = globalSpeedEditable / particlesToSpawnOnStart.Sum();
+        computeShaderResults = new float3[particlesToSpawnOnStart.Sum()];
+        RedParticle = RedParticleEditable;
+        YellowParticle = YellowParticleEditable;
     }
 }

@@ -3,20 +3,21 @@ using System.Collections.Generic;
 
 public class Tags : MonoBehaviour
 {
-    public bool Particle;
+    //only one bool should be active per particle
     public bool Red_p;
-    public List<string> tags = new List<string>();
+    public bool Yellow_p;
+    public int DONTTOUCHthisThingsType;
 
     private void Start()
     {
-        if (Particle)
-        {
-            tags.Add("Particle");
-        }
-
         if (Red_p)
         {
-            tags.Add("Red_p");
+            DONTTOUCHthisThingsType = 1;
+        }
+
+        if (Yellow_p)
+        {
+            DONTTOUCHthisThingsType = 2;
         }
     }
 }

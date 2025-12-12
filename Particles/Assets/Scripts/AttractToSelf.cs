@@ -8,11 +8,8 @@ using UnityEngine;
 
 public class AttractToSelf : ParticleManager
 {
-    
-    private Rigidbody2D thisObjectsRigidbody;
-    private Collider2D[] thisObjectsColliders;
-    private List<GameObject> objectsInRange;
     // attract to varibles; runs on CPU
+    /*
     [SerializeField] private string attractToWhat;
     [SerializeField] private float range;
     [SerializeField] private float attractionStrengthMultiplier;
@@ -20,7 +17,12 @@ public class AttractToSelf : ParticleManager
     [SerializeField] private float repelForceMultiplier;
     [SerializeField] private float dampingMultiplier;
     [SerializeField] private float radious;
-    
+    */
+
+
+    private Rigidbody2D thisObjectsRigidbody;
+    private Collider2D[] thisObjectsColliders;
+    //private List<GameObject> objectsInRange;
     private int IDinShader;
     Predicate<GameObject> isThisGameObject;
 
@@ -44,13 +46,11 @@ public class AttractToSelf : ParticleManager
     }
     void FixedUpdate()
     {
-        
-        if (GlobalValues.computeShaderResults[IDinShader].z == 1)
+        //Debug.Log(GlobalValues.computeShaderResults[IDinShader]);
+        if (GlobalValues.computeShaderResults[IDinShader].z != 0)
         {
             thisObjectsRigidbody.AddForce(new Vector2(GlobalValues.computeShaderResults[IDinShader].x, GlobalValues.computeShaderResults[IDinShader].y) * GlobalValues.globalSpeed, ForceMode2D.Impulse);
         }
-
-
 
         /* attract to; runs on CPU (bad code)
         objectsInRange = ObjectsWithTagInRange(GlobalValues.allParticlesOnScreen, attractToWhat, range, gameObject);

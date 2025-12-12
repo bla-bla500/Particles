@@ -191,7 +191,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5297367c7d02ff545a4b71c9ea2cd3e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GlobalValues
-  temp: {fileID: 6538820622810690383, guid: 463c1a49ff765484f86a455cb525763a, type: 3}
+  globalSpeedEditable: 0.1
+  RedParticleEditable: {fileID: 6538820622810690383, guid: 463c1a49ff765484f86a455cb525763a, type: 3}
+  YellowParticleEditable: {fileID: 6538820622810690383, guid: 69368c4988e37264eabfae7d63d011a9, type: 3}
 --- !u!1 &2106987948
 GameObject:
   m_ObjectHideFlags: 0

@@ -38,6 +38,7 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < GlobalValues.allParticlesOnScreen.Count; i++)
         {
             tempForBuffer[i] = GlobalValues.allParticlesOnScreen[i].transform.position;
+            tempForBuffer[i].z = GlobalValues.allParticlesOnScreen[i].GetComponent<Tags>().DONTTOUCHthisThingsType;
         }
         if (tempForBuffer.Length > 0) 
         {
@@ -67,10 +68,11 @@ public class GameManager : MonoBehaviour
             
             float3[] debugResults = new float3[debugBuffer.count];
             debugBuffer.GetData(debugResults);
-            //for (int i = 0; i < debugResults.Length; i++)
-            //{
-            //    Debug.Log(i + ": " + debugResults[i]);
-            //}
+            //Debug.Log(debugResults[1]);
+            /*for (int i = 0; i < debugResults.Length; i++)
+            {
+                Debug.Log(i + ": " + debugResults[i]);
+            }*/
             
 
             staticComputeBuffer.Release();
@@ -80,11 +82,26 @@ public class GameManager : MonoBehaviour
     }
     
 
-    public void SpawnParticles(int amount)
+    public void SpawnParticles(int[] amount)
     {
-        for (int i = 0; i < amount; i++)
+        GameObject particlePrefab = GlobalValues.RedParticle;
+        for (int i = 0; i < amount.Length; i++)
         {
-            Instantiate(GlobalValues.RedParticle, new Vector2(UnityEngine.Random.Range(-spawnRange,spawnRange), UnityEngine.Random.Range(-spawnRange,spawnRange)), transform.rotation);
+            switch (i)
+            {
+                case 0:
+                    particlePrefab = GlobalValues.RedParticle;
+                    break;
+                case 1:
+                    particlePrefab = GlobalValues.YellowParticle;
+                    break;
+            }
+            for (int j = 0; j < amount[i]; j++)
+            {
+                Instantiate(particlePrefab, new Vector2(UnityEngine.Random.Range(-spawnRange, spawnRange), UnityEngine.Random.Range(-spawnRange, spawnRange)), transform.rotation);
+            }
+            
+
         }
     }
 
@@ -94,10 +111,7 @@ public class GameManager : MonoBehaviour
         GameObject[] array = GameObject.FindGameObjectsWithTag("Search");
         for (int i = 0; i < array.Length; i++)
         {
-            if (array[i].GetComponent<Tags>().tags.Contains("Particle"))
-            {
-                list.Add(array[i]);
-            }
+            list.Add(array[i]);
         }
         list.TrimExcess();
         return list;

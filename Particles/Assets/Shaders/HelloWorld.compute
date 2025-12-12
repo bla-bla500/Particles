@@ -16,6 +16,11 @@ float3 DebugVar;
 float distanceTo;
 float2 directionTo;
 
+float forceRange;
+float forceStrengthMultiplier;
+float repelWhenCloseStrengthMultiplier;
+float dampingMultiplier;
+
 //basic functions
 float DistanceTo(float2 item1, float2 item2)
 {
@@ -29,6 +34,41 @@ float2 DirectionTo(float2 item1, float2 item2)
 }
 
 
+//function that attracts particles together
+static const uint howManyParticleTypesExist = 2;
+void attractToType(uint indexOfthingAtrractedTo, int2 typesAllowed)
+{
+    bool isIn = false;
+    for (uint j = 0; j < howManyParticleTypesExist; j++)
+    {
+        if (staticBuffer[indexOfthingAtrractedTo].z == typesAllowed[j])
+        {
+            isIn = true;
+        }
+        if (isIn == false && j == (howManyParticleTypesExist - 1))
+        {
+            return;
+        }
+    }
+
+    distanceTo = DistanceTo(float2(staticBuffer[whichParticle].x, staticBuffer[whichParticle].y), float2(staticBuffer[indexOfthingAtrractedTo].x, staticBuffer[indexOfthingAtrractedTo].y));
+    directionTo = DirectionTo(float2(staticBuffer[indexOfthingAtrractedTo].x, staticBuffer[indexOfthingAtrractedTo].y), float2(staticBuffer[whichParticle].x, staticBuffer[whichParticle].y));
+    
+    if (distanceTo < forceRange && distanceTo != 0 && isIn == true)
+    {
+            //attract to other things
+        Result += directionTo * (distanceTo * forceStrengthMultiplier);
+            
+            // repel when close
+        Result += (-directionTo) * (repelWhenCloseStrengthMultiplier / max(0.01, float(pow(distanceTo, 2))));
+            
+            //dampining 
+        Result += -dampingMultiplier * (Result * abs(Result));
+            
+            //set buffer
+        theBuffer[whichParticle] = float3(theBuffer[whichParticle].x, theBuffer[whichParticle].y, 0) + float3(Result.x, Result.y, 0);
+    }
+}
 
 
 
@@ -36,47 +76,41 @@ float2 DirectionTo(float2 item1, float2 item2)
 void CSMain(uint3 id : SV_GroupThreadID, uint3 groupID : SV_GroupID)
 {
     //varibles that deffine particles
-    float forceRange = 5;
-    float forceStrengthMultiplier = 1;
-    float repelWhenCloseStrengthMultiplier = 1;
-    float dampingMultiplier = 0.01;
-    
+    forceRange = 5;
+    forceStrengthMultiplier = 1;
+    repelWhenCloseStrengthMultiplier = 1;
+    dampingMultiplier = 0.01;
     
     uint count;
     uint stride;
-
+    
     Result = float2(0, 0);
     
     staticBuffer.GetDimensions(count, stride);
     
     whichParticle = ((id.y * 8) + id.x) + (groupID.x * 64);
     
+    int2 typesAlowed;
+    int2 Red = int2(1, -2);
+    int2 Yellow = int2(2, -1);
+
+    switch (staticBuffer[whichParticle].z)
+    {
+        case 1:
+            typesAlowed = int2(Red.x, Red.y);
+            break;
+        case 2:
+            typesAlowed = int2(Yellow.x, Yellow.y);
+            break;
+    }
     
-        
-        
+    
     for (uint i = 0; i < count; i++)
     {
-        distanceTo = DistanceTo(float2(staticBuffer[whichParticle].x, staticBuffer[whichParticle].y), float2(staticBuffer[i].x, staticBuffer[i].y));
-        directionTo = DirectionTo(float2(staticBuffer[i].x, staticBuffer[i].y), float2(staticBuffer[whichParticle].x, staticBuffer[whichParticle].y));
-        
-        if (distanceTo < forceRange && distanceTo != 0) //distanceTo < forceRange && distanceTo != 0
-        {
-            //attract to other things
-            Result += directionTo * (distanceTo * forceStrengthMultiplier);
-            
-            // repel when close
-            Result += (-directionTo) * (repelWhenCloseStrengthMultiplier / max(0.01, float(pow(distanceTo, 2))));
-            
-            //dampining 
-            Result += -dampingMultiplier * (Result * abs(Result));
-            
-            //set buffer
-            theBuffer[whichParticle] = float3(theBuffer[whichParticle].x, theBuffer[whichParticle].y, 0) + float3(Result.x, Result.y, 0);
-        }
-
-        
+        attractToType(i, typesAlowed);
     }
-    theBuffer[whichParticle] = theBuffer[whichParticle] + float3(0,0,1);
     
-
+    theBuffer[whichParticle] += float3(0, 0, staticBuffer[whichParticle].z);
+        
+  
 }

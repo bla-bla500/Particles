@@ -4,12 +4,9 @@ using System.Collections.Generic;
 using System;
 using Unity.VisualScripting;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Linq;
 public class ParticleManager : MonoBehaviour
 {
-    private void Awake()
-    {
-        GlobalValues.globalSpeed = GlobalValues.globalSpeedEditable/GlobalValues.particlesToSpawnOnStart;
-    }
 
 
     public float DistancetoObject(GameObject object1, GameObject object2)
@@ -24,7 +21,7 @@ public class ParticleManager : MonoBehaviour
         return (object2.transform.position - object1.transform.position).normalized;
     }
 
-
+    /*
     protected List<GameObject> ObjectsWithTagInRange(List<GameObject> whichObjects, String withWhatTag, float inWhatRange, GameObject fromWhatObject)
     {
         List<GameObject> list = new List<GameObject>();
@@ -44,4 +41,6 @@ public class ParticleManager : MonoBehaviour
         list.TrimExcess();
         return list;
     }
+    */
 }
+
