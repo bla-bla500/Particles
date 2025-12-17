@@ -39,11 +39,17 @@ static const uint howManyParticleTypesExist = 2;
 void attractToType(uint indexOfthingAtrractedTo, int2 typesAllowed)
 {
     bool isIn = false;
-    for (uint j = 0; j < howManyParticleTypesExist; j++)
+    bool repel = false;
+    for (uint j = 0; j < howManyParticleTypesExist || isIn == false; j++)
     {
-        if (staticBuffer[indexOfthingAtrractedTo].z == typesAllowed[j])
+        if (staticBuffer[indexOfthingAtrractedTo].z == abs(typesAllowed[j]))
         {
             isIn = true;
+            if (typesAllowed[j] < 0)
+            {
+                repel = true;
+            }
+
         }
         if (isIn == false && j == (howManyParticleTypesExist - 1))
         {
@@ -65,6 +71,12 @@ void attractToType(uint indexOfthingAtrractedTo, int2 typesAllowed)
             //dampining 
         Result += -dampingMultiplier * (Result * abs(Result));
             
+            //inverse result if repel
+        if (repel)
+        {
+            Result = -Result;
+        }
+        
             //set buffer
         theBuffer[whichParticle] = float3(theBuffer[whichParticle].x, theBuffer[whichParticle].y, 0) + float3(Result.x, Result.y, 0);
     }

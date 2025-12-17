@@ -19,7 +19,7 @@ public class GlobalValues : MonoBehaviour
     {
         DontDestroyOnLoad(gameObject);
         particlesToSpawnOnStart = new int[] {500, 500};
-        globalSpeed = globalSpeedEditable / particlesToSpawnOnStart.Sum();
+        globalSpeed = globalSpeedEditable / 1000;
         computeShaderResults = new float3[particlesToSpawnOnStart.Sum()];
         RedParticle = RedParticleEditable;
         YellowParticle = YellowParticleEditable;
