@@ -14,9 +14,11 @@ public class GameManager : MonoBehaviour
 
     public ComputeShader computeShader;
     private ComputeBuffer computeBuffer;
+    private ComputeBuffer interactionMatrix;
     private ComputeBuffer debugBuffer;
     private ComputeBuffer staticComputeBuffer;
     private Vector3[] allParticlesOnScreenPositions;
+    private int howManyTypesOfParticles = 2;
 
     private void Awake()
     {
@@ -29,6 +31,16 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         SpawnParticles(GlobalValues.particlesToSpawnOnStart);
+
+        float[] tempForBuffer = new float[howManyTypesOfParticles*howManyTypesOfParticles];
+        interactionMatrix = new ComputeBuffer(tempForBuffer.Length, 4);
+        for (int i = 0; i < tempForBuffer.Length; i++)
+        {
+            tempForBuffer[i] = GetRandomStength();
+        }
+        interactionMatrix.SetData(tempForBuffer);
+        computeShader.SetBuffer(computeShader.FindKernel("CSMain"), "interactionMatrix", interactionMatrix);
+
     }
     
     void Update()
@@ -45,6 +57,7 @@ public class GameManager : MonoBehaviour
             staticComputeBuffer = new ComputeBuffer(tempForBuffer.Length, 12);
             computeBuffer = new ComputeBuffer(tempForBuffer.Length, 12);
             debugBuffer = new ComputeBuffer(tempForBuffer.Length, 12);
+
             staticComputeBuffer.SetData(tempForBuffer);
             for (int i = 0; i < tempForBuffer.Length; i++)
             {
@@ -53,7 +66,7 @@ public class GameManager : MonoBehaviour
             computeBuffer.SetData(tempForBuffer);
             debugBuffer.SetData(tempForBuffer);
 
-
+            
             computeShader.SetBuffer(computeShader.FindKernel("CSMain"), "staticBuffer", staticComputeBuffer);
             computeShader.SetBuffer(computeShader.FindKernel("CSMain"), "theBuffer", computeBuffer);
             computeShader.SetBuffer(computeShader.FindKernel("CSMain"), "debugBuffer", debugBuffer);
@@ -73,7 +86,6 @@ public class GameManager : MonoBehaviour
             {
                 Debug.Log(i + ": " + debugResults[i]);
             }*/
-            
 
             staticComputeBuffer.Release();
             computeBuffer.Release();
@@ -115,5 +127,15 @@ public class GameManager : MonoBehaviour
         }
         list.TrimExcess();
         return list;
+    }
+
+    private float GetRandomStength()
+    {
+        float maybe = 0;
+        while (-0.11 < maybe && maybe < 0.11 == true)
+        {
+            maybe = (float)Math.Round(Convert.ToDouble(UnityEngine.Random.Range(-100, 101)) / 100, 2);
+        }
+        return maybe;
     }
 }

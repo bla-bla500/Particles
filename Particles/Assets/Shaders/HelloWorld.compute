@@ -6,6 +6,7 @@
 
 
 StructuredBuffer<float3> staticBuffer;
+StructuredBuffer<float> interactionMatrix;
 RWStructuredBuffer<float3> theBuffer;
 RWStructuredBuffer<float3> debugBuffer;
 
@@ -39,17 +40,11 @@ static const uint howManyParticleTypesExist = 2;
 void attractToType(uint indexOfthingAtrractedTo, int2 typesAllowed)
 {
     bool isIn = false;
-    bool repel = false;
     for (uint j = 0; j < howManyParticleTypesExist || isIn == false; j++)
     {
-        if (staticBuffer[indexOfthingAtrractedTo].z == abs(typesAllowed[j]))
+        if (staticBuffer[indexOfthingAtrractedTo].z == typesAllowed[j])
         {
             isIn = true;
-            if (typesAllowed[j] < 0)
-            {
-                repel = true;
-            }
-
         }
         if (isIn == false && j == (howManyParticleTypesExist - 1))
         {
@@ -71,11 +66,8 @@ void attractToType(uint indexOfthingAtrractedTo, int2 typesAllowed)
             //dampining 
         Result += -dampingMultiplier * (Result * abs(Result));
             
-            //inverse result if repel
-        if (repel)
-        {
-            Result = -Result;
-        }
+            //change force based on interaction matrix
+        Result = Result * interactionMatrix[(staticBuffer[whichParticle].z - 1) * howManyParticleTypesExist + (staticBuffer[indexOfthingAtrractedTo].z - 1)];
         
             //set buffer
         theBuffer[whichParticle] = float3(theBuffer[whichParticle].x, theBuffer[whichParticle].y, 0) + float3(Result.x, Result.y, 0);
@@ -103,8 +95,8 @@ void CSMain(uint3 id : SV_GroupThreadID, uint3 groupID : SV_GroupID)
     whichParticle = ((id.y * 8) + id.x) + (groupID.x * 64);
     
     int2 typesAlowed;
-    int2 Red = int2(1, -2);
-    int2 Yellow = int2(2, -1);
+    int2 Red = int2(1, 2);
+    int2 Yellow = int2(1, 2);
 
     switch (staticBuffer[whichParticle].z)
     {
