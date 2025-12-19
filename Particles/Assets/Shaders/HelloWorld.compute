@@ -4,7 +4,7 @@
 // Create a RenderTexture with enableRandomWrite flag and set it
 // with cs.SetTexture
 
-
+StructuredBuffer<float2> velocityBuffer;
 StructuredBuffer<float3> staticBuffer;
 StructuredBuffer<float> interactionMatrix;
 RWStructuredBuffer<float3> theBuffer;
@@ -60,14 +60,12 @@ void attractToType(uint indexOfthingAtrractedTo, int2 typesAllowed)
             //attract to other things
         Result += directionTo * (distanceTo * forceStrengthMultiplier);
             
-            // repel when close
+            // repel when close  
         Result += (-directionTo) * (repelWhenCloseStrengthMultiplier / max(0.01, float(pow(distanceTo, 2))));
-            
-            //dampining 
-        Result += -dampingMultiplier * (Result * abs(Result));
             
             //change force based on interaction matrix
         Result = Result * interactionMatrix[(staticBuffer[whichParticle].z - 1) * howManyParticleTypesExist + (staticBuffer[indexOfthingAtrractedTo].z - 1)];
+        
         
             //set buffer
         theBuffer[whichParticle] = float3(theBuffer[whichParticle].x, theBuffer[whichParticle].y, 0) + float3(Result.x, Result.y, 0);
@@ -82,8 +80,7 @@ void CSMain(uint3 id : SV_GroupThreadID, uint3 groupID : SV_GroupID)
     //varibles that deffine particles
     forceRange = 5;
     forceStrengthMultiplier = 1;
-    repelWhenCloseStrengthMultiplier = 1;
-    dampingMultiplier = 0.01;
+    repelWhenCloseStrengthMultiplier = 2;
     
     uint count;
     uint stride;
@@ -113,6 +110,7 @@ void CSMain(uint3 id : SV_GroupThreadID, uint3 groupID : SV_GroupID)
     {
         attractToType(i, typesAlowed);
     }
+    
     
     theBuffer[whichParticle] += float3(0, 0, staticBuffer[whichParticle].z);
         

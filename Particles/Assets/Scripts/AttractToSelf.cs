@@ -44,6 +44,8 @@ public class AttractToSelf : ParticleManager
 
         //radious = 0.2f;
     }
+
+    float dampingMultiplier = GlobalValues.dampingMultiplier;
     void FixedUpdate()
     {
         //Debug.Log(GlobalValues.computeShaderResults[IDinShader]);
@@ -51,6 +53,8 @@ public class AttractToSelf : ParticleManager
         {
             thisObjectsRigidbody.AddForce(new Vector2(GlobalValues.computeShaderResults[IDinShader].x, GlobalValues.computeShaderResults[IDinShader].y) * GlobalValues.globalSpeed, ForceMode2D.Impulse);
         }
+
+        thisObjectsRigidbody.linearVelocity = thisObjectsRigidbody.linearVelocity * dampingMultiplier;
 
         /* attract to; runs on CPU (bad code)
         objectsInRange = ObjectsWithTagInRange(GlobalValues.allParticlesOnScreen, attractToWhat, range, gameObject);

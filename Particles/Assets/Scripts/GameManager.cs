@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
     private ComputeBuffer interactionMatrix;
     private ComputeBuffer debugBuffer;
     private ComputeBuffer staticComputeBuffer;
+    private ComputeBuffer staticVeclocityBuffer;
     private Vector3[] allParticlesOnScreenPositions;
     private int howManyTypesOfParticles = 2;
 
@@ -38,6 +39,13 @@ public class GameManager : MonoBehaviour
         {
             tempForBuffer[i] = GetRandomStength();
         }
+
+        //display matrix values
+        for (int i = 0; i < tempForBuffer.Length; i++)
+        {
+            Debug.Log(tempForBuffer[i]);
+        }
+
         interactionMatrix.SetData(tempForBuffer);
         computeShader.SetBuffer(computeShader.FindKernel("CSMain"), "interactionMatrix", interactionMatrix);
 
@@ -55,10 +63,20 @@ public class GameManager : MonoBehaviour
         if (tempForBuffer.Length > 0) 
         {
             staticComputeBuffer = new ComputeBuffer(tempForBuffer.Length, 12);
+            staticVeclocityBuffer = new ComputeBuffer (tempForBuffer.Length, 8);
             computeBuffer = new ComputeBuffer(tempForBuffer.Length, 12);
             debugBuffer = new ComputeBuffer(tempForBuffer.Length, 12);
 
             staticComputeBuffer.SetData(tempForBuffer);
+
+            Vector2[] tempVelocityForBuffer = new Vector2[GlobalValues.allParticlesOnScreen.Count];
+
+            for (int i = 0; i < GlobalValues.allParticlesOnScreen.Count; i++)
+            {
+                tempVelocityForBuffer[i] = GlobalValues.allParticlesOnScreen[i].GetComponent<Rigidbody2D>().linearVelocity;
+            }
+            staticVeclocityBuffer.SetData(tempVelocityForBuffer);
+
             for (int i = 0; i < tempForBuffer.Length; i++)
             {
                 tempForBuffer[i] = new Vector3(0,0,0);
@@ -66,7 +84,7 @@ public class GameManager : MonoBehaviour
             computeBuffer.SetData(tempForBuffer);
             debugBuffer.SetData(tempForBuffer);
 
-            
+            computeShader.SetBuffer(computeShader.FindKernel("CSMain"), "velocityBuffer", staticVeclocityBuffer);
             computeShader.SetBuffer(computeShader.FindKernel("CSMain"), "staticBuffer", staticComputeBuffer);
             computeShader.SetBuffer(computeShader.FindKernel("CSMain"), "theBuffer", computeBuffer);
             computeShader.SetBuffer(computeShader.FindKernel("CSMain"), "debugBuffer", debugBuffer);
@@ -87,6 +105,7 @@ public class GameManager : MonoBehaviour
                 Debug.Log(i + ": " + debugResults[i]);
             }*/
 
+            staticVeclocityBuffer.Release();
             staticComputeBuffer.Release();
             computeBuffer.Release();
             debugBuffer.Release();

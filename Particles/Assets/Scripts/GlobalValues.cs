@@ -14,8 +14,10 @@ public class GlobalValues : MonoBehaviour
     [SerializeField] private GameObject YellowParticleEditable;
     static public GameObject RedParticle;
     static public GameObject YellowParticle;
+    [SerializeField]private float dampingMultiplierEditable;
+    static public float dampingMultiplier;
 
-    private void Awake()
+   private void Awake()
     {
         DontDestroyOnLoad(gameObject);
         particlesToSpawnOnStart = new int[] {500, 500};
@@ -23,5 +25,6 @@ public class GlobalValues : MonoBehaviour
         computeShaderResults = new float3[particlesToSpawnOnStart.Sum()];
         RedParticle = RedParticleEditable;
         YellowParticle = YellowParticleEditable;
+        dampingMultiplier = dampingMultiplierEditable;
     }
 }

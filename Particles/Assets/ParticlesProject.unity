@@ -194,6 +194,7 @@ MonoBehaviour:
   globalSpeedEditable: 1
   RedParticleEditable: {fileID: 6538820622810690383, guid: 463c1a49ff765484f86a455cb525763a, type: 3}
   YellowParticleEditable: {fileID: 6538820622810690383, guid: 69368c4988e37264eabfae7d63d011a9, type: 3}
+  dampingMultiplierEditable: 0.8
 --- !u!1 &2106987948
 GameObject:
   m_ObjectHideFlags: 0
