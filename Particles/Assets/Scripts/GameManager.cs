@@ -151,7 +151,7 @@ public class GameManager : MonoBehaviour
     private float GetRandomStength()
     {
         float maybe = 0;
-        while (-0.11 < maybe && maybe < 0.11 == true)
+        while (-0.11 < maybe && maybe < 0.11)
         {
             maybe = (float)Math.Round(Convert.ToDouble(UnityEngine.Random.Range(-100, 101)) / 100, 2);
         }
