@@ -41,10 +41,10 @@ public class GameManager : MonoBehaviour
         }
 
         //display matrix values
-        for (int i = 0; i < tempForBuffer.Length; i++)
+        /*for (int i = 0; i < tempForBuffer.Length; i++)
         {
             Debug.Log(tempForBuffer[i]);
-        }
+        }*/
 
         interactionMatrix.SetData(tempForBuffer);
         computeShader.SetBuffer(computeShader.FindKernel("CSMain"), "interactionMatrix", interactionMatrix);
@@ -134,6 +134,30 @@ public class GameManager : MonoBehaviour
             
 
         }
+    }
+
+    public void DeleteParticles(int[] amount)
+    {
+        for (int i = 0; i < amount.Length; i++)
+        {
+            if (amount[i] > 0)
+            {
+                int k = 0;
+                for (int j = 0; j < GlobalValues.allParticlesOnScreen.Count; j++)
+                {
+                    //Debug.Log(GlobalValues.allParticlesOnScreen[j].GetComponent<Tags>().DONTTOUCHthisThingsType);
+                    if (GlobalValues.allParticlesOnScreen[j].GetComponent<Tags>().DONTTOUCHthisThingsType == i+1)
+                    {
+                        if (k < amount[i])
+                        {
+                            Destroy(GlobalValues.allParticlesOnScreen[j]);
+                            k++;
+                        }
+                    }
+                }
+            }
+        }
+        GlobalValues.allParticlesOnScreen = AllParticlesOnScreen();
     }
 
     public List<GameObject> AllParticlesOnScreen()

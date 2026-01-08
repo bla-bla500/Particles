@@ -1,7 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GlobalValues : MonoBehaviour
 {
@@ -26,5 +29,10 @@ public class GlobalValues : MonoBehaviour
         RedParticle = RedParticleEditable;
         YellowParticle = YellowParticleEditable;
         dampingMultiplier = dampingMultiplierEditable;
+    }
+
+    public void RefreshTimeScale()
+    {
+        globalSpeed = globalSpeedEditable / 1000;
     }
 }

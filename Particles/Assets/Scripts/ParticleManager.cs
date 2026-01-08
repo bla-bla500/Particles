@@ -12,7 +12,7 @@ public class ParticleManager : MonoBehaviour
     public float DistancetoObject(GameObject object1, GameObject object2)
     {
         float distance = (float)Math.Sqrt(Math.Pow((object1.transform.position.x - object2.transform.position.x), 2) +
-         Math.Pow((object1.transform.position.y - object2.transform.position.y), 2));
+        Math.Pow((object1.transform.position.y - object2.transform.position.y), 2));
         return distance;
     }
 
