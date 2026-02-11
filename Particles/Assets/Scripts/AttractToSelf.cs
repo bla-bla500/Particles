@@ -31,7 +31,7 @@ public class AttractToSelf : ParticleManager
         isThisGameObject = obj => obj.GetInstanceID() == gameObject.GetInstanceID();
         GlobalValues.allParticlesOnScreen.Add(gameObject);
 
-        IDinShader = GlobalValues.allParticlesOnScreen.FindIndex(isThisGameObject);
+        FindIndex();
 
         //Disables Rigidbodies Collider
         thisObjectsRigidbody = gameObject.GetComponent<Rigidbody2D>();
@@ -48,6 +48,8 @@ public class AttractToSelf : ParticleManager
     float dampingMultiplier = GlobalValues.dampingMultiplier;
     void FixedUpdate()
     {
+
+
         //Debug.Log(GlobalValues.computeShaderResults[IDinShader]);
         if (GlobalValues.computeShaderResults[IDinShader].z != 0)
         {
@@ -89,5 +91,11 @@ public class AttractToSelf : ParticleManager
         GlobalValues.allParticlesOnScreen.RemoveAt(GlobalValues.allParticlesOnScreen.FindIndex(isThisGameObject));
         GlobalValues.allParticlesOnScreen.TrimExcess();
     }
+
+    public void FindIndex()
+    {
+        IDinShader = GlobalValues.allParticlesOnScreen.FindIndex(isThisGameObject);
+    }
+
 
 }

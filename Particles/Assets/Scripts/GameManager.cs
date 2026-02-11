@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour
 
     public ComputeShader computeShader;
     private ComputeBuffer computeBuffer;
-    private ComputeBuffer interactionMatrix;
+    public static ComputeBuffer interactionMatrix;
     private ComputeBuffer debugBuffer;
     private ComputeBuffer staticComputeBuffer;
     private ComputeBuffer staticVeclocityBuffer;
@@ -63,19 +63,10 @@ public class GameManager : MonoBehaviour
         if (tempForBuffer.Length > 0) 
         {
             staticComputeBuffer = new ComputeBuffer(tempForBuffer.Length, 12);
-            staticVeclocityBuffer = new ComputeBuffer (tempForBuffer.Length, 8);
             computeBuffer = new ComputeBuffer(tempForBuffer.Length, 12);
             debugBuffer = new ComputeBuffer(tempForBuffer.Length, 12);
 
             staticComputeBuffer.SetData(tempForBuffer);
-
-            Vector2[] tempVelocityForBuffer = new Vector2[GlobalValues.allParticlesOnScreen.Count];
-
-            for (int i = 0; i < GlobalValues.allParticlesOnScreen.Count; i++)
-            {
-                tempVelocityForBuffer[i] = GlobalValues.allParticlesOnScreen[i].GetComponent<Rigidbody2D>().linearVelocity;
-            }
-            staticVeclocityBuffer.SetData(tempVelocityForBuffer);
 
             for (int i = 0; i < tempForBuffer.Length; i++)
             {
@@ -84,7 +75,6 @@ public class GameManager : MonoBehaviour
             computeBuffer.SetData(tempForBuffer);
             debugBuffer.SetData(tempForBuffer);
 
-            computeShader.SetBuffer(computeShader.FindKernel("CSMain"), "velocityBuffer", staticVeclocityBuffer);
             computeShader.SetBuffer(computeShader.FindKernel("CSMain"), "staticBuffer", staticComputeBuffer);
             computeShader.SetBuffer(computeShader.FindKernel("CSMain"), "theBuffer", computeBuffer);
             computeShader.SetBuffer(computeShader.FindKernel("CSMain"), "debugBuffer", debugBuffer);
@@ -105,7 +95,6 @@ public class GameManager : MonoBehaviour
                 Debug.Log(i + ": " + debugResults[i]);
             }*/
 
-            staticVeclocityBuffer.Release();
             staticComputeBuffer.Release();
             computeBuffer.Release();
             debugBuffer.Release();
@@ -131,7 +120,6 @@ public class GameManager : MonoBehaviour
             {
                 Instantiate(particlePrefab, new Vector2(UnityEngine.Random.Range(-spawnRange, spawnRange), UnityEngine.Random.Range(-spawnRange, spawnRange)), transform.rotation);
             }
-            
 
         }
     }
@@ -146,18 +134,16 @@ public class GameManager : MonoBehaviour
                 for (int j = 0; j < GlobalValues.allParticlesOnScreen.Count; j++)
                 {
                     //Debug.Log(GlobalValues.allParticlesOnScreen[j].GetComponent<Tags>().DONTTOUCHthisThingsType);
-                    if (GlobalValues.allParticlesOnScreen[j].GetComponent<Tags>().DONTTOUCHthisThingsType == i+1)
+                    if (GlobalValues.allParticlesOnScreen[j].GetComponent<Tags>().DONTTOUCHthisThingsType == i+1 && k < amount[i])
                     {
-                        if (k < amount[i])
-                        {
-                            Destroy(GlobalValues.allParticlesOnScreen[j]);
-                            k++;
-                        }
+                         Destroy(GlobalValues.allParticlesOnScreen[j]);
+                         GlobalValues.allParticlesOnScreen.RemoveAt(j);
+                         k++;
                     }
                 }
             }
         }
-        GlobalValues.allParticlesOnScreen = AllParticlesOnScreen();
+        GlobalValues.allParticlesOnScreen.TrimExcess();
     }
 
     public List<GameObject> AllParticlesOnScreen()

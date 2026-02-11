@@ -10,6 +10,7 @@ using UnityEngine.Serialization;
 public class UIFuntionaity : MonoBehaviour
 {
     GameObject settingsPanel;
+    GameObject matrixPanel;
     GameManager gameManager;
     private int[] TempParticleAmount;
 
@@ -21,6 +22,7 @@ public class UIFuntionaity : MonoBehaviour
     {
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         settingsPanel = GameObject.Find("Settings Panel");
+        matrixPanel = GameObject.Find("Matrix Panel");
         TempParticleAmount = (int[])GlobalValues.particlesToSpawnOnStart.Clone();
 
         for (int i = 0; i < GlobalValues.particlesToSpawnOnStart.Length; i++)
@@ -28,20 +30,57 @@ public class UIFuntionaity : MonoBehaviour
             GameObject.Find(Convert.ToString(i + 1) + " InputField").GetComponent<TMP_InputField>().text = Convert.ToString(GlobalValues.particlesToSpawnOnStart[i]);
         }
 
-        SettingsExit();
+        //set interaction matrix
+        Vector2 matrixPoint = new Vector2(1, 1);
+        float[] data = new float[4];
+        GameManager.interactionMatrix.GetData(data);
+        for (int i = 0; i < GameManager.interactionMatrix.count; i++)
+        {
+            GameObject.Find("matrix(" + matrixPoint.x + "," + matrixPoint.y + ")").GetComponent<TMP_InputField>().text = Convert.ToString(data[i]);
+            matrixPoint.x += 1;
+            if (matrixPoint.x > 2)
+            {
+                matrixPoint.x = 1;
+                matrixPoint.y += 1;
+            }
+        }
+
+        settingsPanel.SetActive(false);
+        matrixPanel.SetActive(false);
     }
-    public void SettingsClicked()
+    public void SettingsClicked(string whichPanel)
     {
         Time.timeScale = 0;
-        settingsPanel.SetActive(true);
+        switch (whichPanel)
+        {
+            case "settings":
+                settingsPanel.SetActive(true);
+                break;
+            case "matrix":
+                matrixPanel.SetActive(true);
+                break;
+        }
+        
     }
-    public void SettingsExit()
+    public void SettingsExit(string whichPanel)
     {
-        Time.timeScale = 1;
-        settingsPanel.SetActive(false);
+        switch (whichPanel)
+        {
+            case "settings":
+                Time.timeScale = 1;
+                settingsPanel.SetActive(false);
+                matrixPanel.SetActive(false);
+                break;
+            case "matrix":
+                matrixPanel.SetActive(false);
+                break;
+        }
     }
     public void ApplySettings()
     {
+
+
+        //Particle amounts
         bool notSame = false;
         bool allTheSame = false;
         for (int i = 0; i < TempParticleAmount.Length; i++)
@@ -53,6 +92,7 @@ public class UIFuntionaity : MonoBehaviour
             catch
             {
                 GameObject.Find(Convert.ToString(i+1) + " InputField").GetComponent<TMP_InputField>().text = "0";
+                TempParticleAmount[i] = Convert.ToInt32(GameObject.Find(Convert.ToString(i + 1) + " InputField").GetComponent<TMP_InputField>().text);
                 Debug.Log("Invalid value");
             }
 
@@ -98,6 +138,11 @@ public class UIFuntionaity : MonoBehaviour
             }
             gameManager.DeleteParticles(DeleteAmount);
             gameManager.SpawnParticles(AddAmount);
+
+            foreach(GameObject i in GlobalValues.allParticlesOnScreen)
+            {
+                i.GetComponent<AttractToSelf>().FindIndex();
+            }
         }
     }
 }

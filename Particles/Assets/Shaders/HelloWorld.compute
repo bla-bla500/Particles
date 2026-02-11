@@ -4,7 +4,6 @@
 // Create a RenderTexture with enableRandomWrite flag and set it
 // with cs.SetTexture
 
-StructuredBuffer<float2> velocityBuffer;
 StructuredBuffer<float3> staticBuffer;
 StructuredBuffer<float> interactionMatrix;
 RWStructuredBuffer<float3> theBuffer;
@@ -54,7 +53,6 @@ void attractToType(uint indexOfthingAtrractedTo)
             // repel when close  
         Result += (-directionTo) * (repelWhenCloseStrengthMultiplier / max(0.01, float(pow(distanceTo, 2))));
             
-        
             //set buffer
         theBuffer[whichParticle] = float3(theBuffer[whichParticle].x, theBuffer[whichParticle].y, 0) + float3(Result.x, Result.y, 0);
     }
