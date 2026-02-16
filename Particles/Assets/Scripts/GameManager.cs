@@ -146,6 +146,7 @@ public class GameManager : MonoBehaviour
         GlobalValues.allParticlesOnScreen.TrimExcess();
     }
 
+
     public List<GameObject> AllParticlesOnScreen()
     {
         List<GameObject> list = new List<GameObject>();

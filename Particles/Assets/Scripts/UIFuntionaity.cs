@@ -32,7 +32,7 @@ public class UIFuntionaity : MonoBehaviour
 
         //set interaction matrix
         Vector2 matrixPoint = new Vector2(1, 1);
-        float[] data = new float[4];
+        float[] data = new float[GameManager.interactionMatrix.count];
         GameManager.interactionMatrix.GetData(data);
         for (int i = 0; i < GameManager.interactionMatrix.count; i++)
         {
@@ -76,8 +76,60 @@ public class UIFuntionaity : MonoBehaviour
                 break;
         }
     }
+
+    public void ResetParticles()
+    {
+        gameManager.DeleteParticles(GlobalValues.particlesToSpawnOnStart);
+        gameManager.SpawnParticles(GlobalValues.particlesToSpawnOnStart);
+    }
     public void ApplySettings()
     {
+        bool enableEverything = false;
+        if (matrixPanel.activeSelf == false)
+        {
+            matrixPanel.SetActive(true);
+            enableEverything = true;
+        }
+
+        //matrix
+        Vector2 matrixPoint = new Vector2(1, 1);
+        float[] data = new float[GameManager.interactionMatrix.count];
+        float[] newData = new float[GameManager.interactionMatrix.count];
+        GameManager.interactionMatrix.GetData(data);
+
+        newData = data;
+        for (int i = 0; i < data.Length; i++)
+        {
+            try
+            {
+                newData[i] = Convert.ToSingle(GameObject.Find("matrix(" + matrixPoint.x + "," + matrixPoint.y + ")").GetComponent<TMP_InputField>().text);
+            }
+            catch
+            {
+                GameObject.Find("matrix(" + matrixPoint.x + "," + matrixPoint.y + ")").GetComponent<TMP_InputField>().text = Convert.ToString(data[i]);
+                Debug.Log("Invalid Entry");
+            }
+
+            matrixPoint.x += 1;
+            if (matrixPoint.x > 2)
+            {
+                matrixPoint.x = 1;
+                matrixPoint.y += 1;
+            }
+        }
+
+        GameManager.interactionMatrix.SetData(newData);
+        matrixPoint = new Vector2(1, 1);
+        for (int i = 0; i < data.Length; i++)
+        {
+            GameObject.Find("matrix(" + matrixPoint.x + "," + matrixPoint.y + ")").GetComponent<TMP_InputField>().text = Convert.ToString(newData[i]);
+            matrixPoint.x += 1;
+            if (matrixPoint.x > 2)
+            {
+                matrixPoint.x = 1;
+                matrixPoint.y += 1;
+            }
+        }
 
 
         //Particle amounts
@@ -87,11 +139,11 @@ public class UIFuntionaity : MonoBehaviour
         {
             try
             {
-                TempParticleAmount[i] = Convert.ToInt32(GameObject.Find(Convert.ToString(i+1) + " InputField").GetComponent<TMP_InputField>().text);
+                TempParticleAmount[i] = Convert.ToInt32(GameObject.Find(Convert.ToString(i + 1) + " InputField").GetComponent<TMP_InputField>().text);
             }
             catch
             {
-                GameObject.Find(Convert.ToString(i+1) + " InputField").GetComponent<TMP_InputField>().text = "0";
+                GameObject.Find(Convert.ToString(i + 1) + " InputField").GetComponent<TMP_InputField>().text = "0";
                 TempParticleAmount[i] = Convert.ToInt32(GameObject.Find(Convert.ToString(i + 1) + " InputField").GetComponent<TMP_InputField>().text);
                 Debug.Log("Invalid value");
             }
@@ -110,7 +162,7 @@ public class UIFuntionaity : MonoBehaviour
         {
             int[] DeleteAmount = new int[TempParticleAmount.Length];
             int[] AddAmount = new int[TempParticleAmount.Length];
-            
+
             int[] formerParticlesToSpawnOnStart = (int[])GlobalValues.particlesToSpawnOnStart.Clone();
             GlobalValues.particlesToSpawnOnStart = (int[])TempParticleAmount.Clone();
 
@@ -118,7 +170,7 @@ public class UIFuntionaity : MonoBehaviour
             {
                 if (TempParticleAmount[i] < formerParticlesToSpawnOnStart[i])
                 {
-                     DeleteAmount[i] = formerParticlesToSpawnOnStart[i] - TempParticleAmount[i];
+                    DeleteAmount[i] = formerParticlesToSpawnOnStart[i] - TempParticleAmount[i];
                 }
                 else
                 {
@@ -127,7 +179,7 @@ public class UIFuntionaity : MonoBehaviour
                     {
                         for (int j = 0; j < TempParticleAmount.Length; j++)
                         {
-                            AddAmount[j] =  TempParticleAmount[j] - formerParticlesToSpawnOnStart[j];
+                            AddAmount[j] = TempParticleAmount[j] - formerParticlesToSpawnOnStart[j];
                         }
                     }
                     else
@@ -139,10 +191,14 @@ public class UIFuntionaity : MonoBehaviour
             gameManager.DeleteParticles(DeleteAmount);
             gameManager.SpawnParticles(AddAmount);
 
-            foreach(GameObject i in GlobalValues.allParticlesOnScreen)
+            foreach (GameObject i in GlobalValues.allParticlesOnScreen)
             {
                 i.GetComponent<AttractToSelf>().FindIndex();
             }
+        }
+           if (enableEverything)
+        {
+            matrixPanel.SetActive(false);
         }
     }
 }
