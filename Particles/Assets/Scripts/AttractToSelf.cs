@@ -48,9 +48,6 @@ public class AttractToSelf : ParticleManager
     float dampingMultiplier = GlobalValues.dampingMultiplier;
     void FixedUpdate()
     {
-
-
-        //Debug.Log(GlobalValues.computeShaderResults[IDinShader]);
         if (GlobalValues.computeShaderResults[IDinShader].z != 0)
         {
             thisObjectsRigidbody.AddForce(new Vector2(GlobalValues.computeShaderResults[IDinShader].x, GlobalValues.computeShaderResults[IDinShader].y) * GlobalValues.globalSpeed, ForceMode2D.Impulse);

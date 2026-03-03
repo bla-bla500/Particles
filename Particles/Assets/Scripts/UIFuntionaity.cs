@@ -79,7 +79,7 @@ public class UIFuntionaity : MonoBehaviour
 
     public void ResetParticles()
     {
-        gameManager.DeleteParticles(GlobalValues.particlesToSpawnOnStart);
+        gameManager.DeleteParticles(GlobalValues.allParticlesOnScreen);
         gameManager.SpawnParticles(GlobalValues.particlesToSpawnOnStart);
     }
     public void ApplySettings()

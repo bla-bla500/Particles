@@ -51,7 +51,7 @@ public class GameManager : MonoBehaviour
 
     }
     
-    void Update()
+    void FixedUpdate()
     {
 
         Vector3[] tempForBuffer = new Vector3[GlobalValues.allParticlesOnScreen.Count];
@@ -144,6 +144,14 @@ public class GameManager : MonoBehaviour
             }
         }
         GlobalValues.allParticlesOnScreen.TrimExcess();
+    }
+
+    public void DeleteParticles(List<GameObject> amount)
+    {
+        for (int i = 0; i < amount.Count; i++)
+        {
+            Destroy(amount[i]);
+        }
     }
 
 
